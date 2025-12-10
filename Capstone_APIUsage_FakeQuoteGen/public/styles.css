@@ -1,0 +1,88 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+
+  /* Dark gradient background */
+  background: linear-gradient(135deg, #1a1a1d, #2c2c34, #1f1f22);
+  background-size: cover;
+
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  color: #f0f0f0;
+}
+
+.container {
+  text-align: center;
+  width: 100%;
+  padding-top: 30px;
+  flex: 1;
+}
+
+.image-wrapper {
+  position: relative;
+  width: 400px;
+  margin: 0 auto;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 25px rgba(0,0,0,0.45);
+}
+
+.image-wrapper img {
+  width: 100%;
+  display: block;
+}
+
+/* Overlay with better spacing and max-width for quotes */
+.quote-overlay {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 15px;
+
+  background: rgba(0, 0, 0, 0.50);
+  backdrop-filter: blur(2px);
+
+  color: white;
+  text-align: center;
+}
+
+/* Limit the width of the quote text */
+.quote {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0 auto 6px auto;
+  max-width: 85%;    /* ← prevents stretching to both edges */
+  line-height: 1.3;
+}
+
+.author {
+  font-size: 15px;
+  margin: 0;
+  opacity: 0.9;
+}
+
+.btn {
+  margin-top: 25px;
+  padding: 12px 25px;
+  font-size: 16px;
+  background-color: #444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+}
+
+.btn:hover {
+  background-color: #666;
+}
+
+footer {
+  margin-top: 30px;
+  text-align: center;
+  padding: 15px;
+  color: #bbb;
+  font-size: 14px;
+}

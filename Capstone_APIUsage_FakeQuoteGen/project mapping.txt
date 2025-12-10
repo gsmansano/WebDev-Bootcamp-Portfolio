@@ -1,0 +1,11 @@
+i will use this api
+
+https://animechan.vercel.app/docs
+
+to get random anime quotes 
+
+and this
+
+https://picsum.photos/
+
+to make a random ass quote that seems important

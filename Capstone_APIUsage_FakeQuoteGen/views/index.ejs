@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Fake Quote Generator</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="image-wrapper">
+        <img src="<%= imageUrl %>" alt="Random image" />
+
+        <div class="quote-overlay">
+          <p class="quote">"<%= data.quote %>"</p>
+          <p class="author"><%= celebrity %></p>
+        </div>
+      </div>
+
+      <form action="/" method="get">
+        <button type="submit" class="btn">Generate Fake Quote</button>
+      </form>
+    </div>
+
+    <footer>
+      <p>
+        Fake Quotes Project | Images by Lorem Picsum | Quotes from Animechan or
+        My Own
+      </p>
+      <% if (data) { %>
+      <p style="font-size: 12px; opacity: 0.6">
+        Actual quote from <%= data.character %> in <%= data.anime %>.
+      </p>
+      <% } %>
+    </footer>
+  </body>
+</html>
