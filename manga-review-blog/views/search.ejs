@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Search Manga</title>
+  </head>
+  <body>
+    <h1>Search for Manga</h1>
+
+    <form action="/search" method="GET">
+      <input type="text" name="q" placeholder="Enter manga title..." required />
+      <button type="submit">Search</button>
+    </form>
+
+    <hr />
+
+    <% if (locals.results && results.length > 0) { %>
+    <h2>Found <%= results.length %> matches:</h2>
+    <ul>
+      <% results.forEach(manga => { %>
+      <li>
+        <img src="<%= manga.images.jpg.small_image_url %>" alt="cover" />
+        <strong><%= manga.title %></strong>
+        (<%= manga.authors[0] ? manga.authors[0].name : 'Unknown' %>)
+
+        <form action="/write-review" method="POST">
+          <input type="hidden" name="mal_id" value="<%= manga.mal_id %>" />
+          <button type="submit">Review this Manga</button>
+        </form>
+      </li>
+      <br />
+      <% }); %>
+    </ul>
+    <% } else if (locals.searchQuery) { %>
+    <p>No results found for "<%= searchQuery %>".</p>
+    <% } %>
+
+    <a href="/">Back to Home</a>
+  </body>
+</html>

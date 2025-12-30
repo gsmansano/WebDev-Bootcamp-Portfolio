@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><%= manga.title_en %> - Review</title>
+</head>
+<body>
+    <a href="/">← Back to Home</a>
+
+    <main>
+        <h1><%= manga.title_en %></h1>
+        <h3>By: <%= manga.author %></h3>
+        
+        <div class="rating-badge">
+            <strong>Rating:</strong> <%= review.rating %>/10
+        </div>
+
+        <article>
+            <p><em>Added on: <%= review.date_added %></em></p>
+            <hr>
+            <p><%= review.full_review %></p>
+        </article>
+    </main>
+</body>
+</html>
