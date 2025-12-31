@@ -1,42 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Manga Review Blog</title>
-</head>
-<body>
-
+  </head>
+  <body>
     <header>
-        <h1>Manga Review Blog</h1>
-        <p>A personal space where I track and review the manga I've read. This project uses the Jikan API and PostgreSQL.</p>
+      <h1>Manga Review Blog</h1>
+      <p>
+        A personal space where I track and review the manga I've read. This
+        project uses the Jikan API and PostgreSQL.
+        <a href="/search" class="btn-new-review">+ Write a New Review</a>
+      </p>
     </header>
 
+    <%# These buttons will control the sorting/order by which the reviews are
+    shown. default is date desc (newest first) They're 'smart' and will work for
+    both changing sort type but also the sorting order.%>
     <section id="controls">
-        <button>Order by Date</button>
-        <button>Order by Rating</button>
-        <button>Order by Title</button>
+      <a
+        href="/?sort=date&dir=<%= (currentSort === 'date' && currentDir === 'desc') ? 'asc' : 'desc' %>"
+      >
+        Order by Date <%= currentSort === 'date' ? (currentDir === 'asc' ? '↑' :
+        '↓') : '' %>
+      </a>
+
+      <a
+        href="/?sort=rating&dir=<%= (currentSort === 'rating' && currentDir === 'desc') ? 'asc' : 'desc' %>"
+      >
+        Order by Rating <%= currentSort === 'rating' ? (currentDir === 'asc' ?
+        '↑' : '↓') : '' %>
+      </a>
+
+      <a
+        href="/?sort=title&dir=<%= (currentSort === 'title' && currentDir === 'asc') ? 'desc' : 'asc' %>"
+      >
+        Order by Title <%= currentSort === 'title' ? (currentDir === 'asc' ? '↑'
+        : '↓') : '' %>
+      </a>
     </section>
 
-    <hr>
-
+    <hr />
+    <% if (reviews.length === 0) { %>
+    <div class="empty-state">
+      <p>You haven't reviewed any manga yet!</p>
+      <a href="/search">Click here to search and write your first review.</a>
+    </div>
+    <% } else { %>
     <main id="reviews-container">
-        <% reviews.forEach(review => { %>
-            <% const manga = mangas.find(m => m.id === review.manga_id); %>
-            
-            <article class="review-summary">
-                <h2><%= manga.title_en %></h2>
-                
-                <img src="<%= manga.cover_url %>" alt="Cover of <%= manga.title_en %>" width="100">
-                
-                <p><strong>Rating:</strong> <%= review.rating %>/10</p>
-                <p><strong>Added on:</strong> <%= review.date_added %></p>
-                <p><strong>Summary:</strong> <%= review.summary %></p>
-                
-                <a href="/review/<%= review.id %>">View Full Review</a>
-                <hr>
-            </article>
-        <% }); %>
-    </main>
+      <% reviews.forEach(review => { %>
+      <article class="review-summary">
+        <h2><%= review.title_en %></h2>
 
-</body>
+        <img
+          src="<%= review.cover_url %>"
+          alt="Cover of <%= review.title_en %>"
+          width="100"
+        />
+
+        <p><strong>Rating:</strong> <%= review.rating %>/10</p>
+        <p><strong>Added on:</strong> <%= review.date_added %></p>
+        <p><strong>Summary:</strong> <%= review.summary %></p>
+
+        <a href="/review/<%= review.review_id %>">View Full Review</a>
+        <hr />
+      </article>
+      <% }); %>
+    </main>
+    <% } %>
+  </body>
 </html>

@@ -19,71 +19,66 @@ const db = new Pool({
   port: 5432,
 });
 
-db.connect();
-
-// a few test arrays. will be substituted for db queries later.
-let mangas = [
-  {
-    id: 1,
-    mal_id: 1,
-    title_en: "One Piece",
-    title_jp: "One Piece",
-    author: "Eichiro Oda",
-    genre: ["Action", "Adventure"],
-    cover_url: "www.google.com",
-  },
-  {
-    id: 2,
-    mal_id: 2,
-    title_en: "Naruto",
-    title_jp: "Naruto",
-    author: "Naruto's Author",
-    genre: ["Action", "Ninja"],
-    cover_url: "www.facebook.com",
-  },
-];
-let users = [{ id: 1, username: "Geovane", password: "123456" }];
-let reviews = [
-  {
-    id: 1,
-    user_id: 1,
-    manga_id: 1,
-    rating: 10,
-    summary: "Summary of One Piece",
-    full_review: "Full review of one piece",
-    date_added: Date(),
-  },
-  {
-    id: 2,
-    user_id: 1,
-    manga_id: 2,
-    rating: 9,
-    summary: "Summary of Naruto Shipuuden",
-    full_review: "Etc",
-    date_added: Date(),
-  },
-];
-
 // home page with all review summary.
 app.get("/", async (req, res) => {
-  // this route will eventually fetch the db for the info
-  res.render("index.ejs", { reviews, mangas, users });
+  // some toggling logic for the main page
+  const sort = req.query.sort || "date";
+  const dir = req.query.dir === "asc" ? "asc" : "desc";
+
+  let sortColumn = "reviews.date_added"; // date desc is the standard sorting
+  if (sort === "rating") sortColumn = "reviews.rating";
+  if (sort === "title") sortColumn = "mangas.title_en";
+
+  try {
+    // this query will join the reviews and some manga info saved in the db.
+    const queryResult = await db.query(
+      `SELECT reviews.id AS review_id, reviews.*, mangas.title_en, mangas.cover_url 
+       FROM reviews 
+       JOIN mangas ON reviews.manga_id = mangas.id
+       ORDER BY ${sortColumn} ${dir.toUpperCase()};`
+    );
+
+    res.render("index.ejs", {
+      reviews: queryResult.rows,
+      currentSort: sort,
+      currentDir: dir,
+    });
+  } catch (err) {
+    console.error(err);
+    res.send("Error fetching reviews from database.");
+  }
 });
 
-// full review pages.
-app.get("/review/:id", (req, res) => {
+// unitary full review page.
+app.get("/review/:id", async (req, res) => {
   const id = parseInt(req.params.id);
 
-  //these will be actually queries fetched from the DB
-  const foundReview = reviews.find((r) => r.id === id);
-  const foundManga = mangas.find(
-    (m) => m.id === foundReview.manga_id
-  );
+  try {
+    const result = await db.query(
+      `SELECT
+        reviews.id AS review_id,
+        reviews.rating,
+        reviews.full_review,
+        reviews.date_added,
+        mangas.* FROM reviews
+        JOIN mangas ON reviews.manga_id = mangas.id
+        WHERE reviews.id = $1`,
+      [id]
+    );
 
-  res.render("post.ejs", {
-    review: foundReview,
-    manga: foundManga,
-  });
+    if (result.rows.length === 0) {
+      return res.status(404).send("Review not found.");
+    }
+
+    const reviewData = result.rows[0];
+
+    res.render("post.ejs", {
+      data: reviewData,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error!");
+  }
 });
 
 // search page that gets data from jikan/mal to create a new review.
@@ -116,48 +111,59 @@ app.post("/write-review", async (req, res) => {
     const response = await axios.get(
       `https://api.jikan.moe/v4/manga/${id}/full`
     );
+    // and we pass it along to our review editor page.
     const mangaData = response.data.data;
-
-    // here we'd save the necessary info for the db
-    // insert queries.
-
     res.render("editor.ejs", { manga: mangaData });
   } catch (error) {
     res.status(500).send("Error loading manga details");
   }
 });
 
-app.post("/save-review", (req, res) => {
-    // Destructure the data coming from editor
-    const { mal_id, title, image_url, author, rating, summary, full_review } = req.body;
+app.post("/save-review", async (req, res) => {
+  // Destructure the data coming from editor
+  const {
+    mal_id,
+    title,
+    title_jp,
+    image_url,
+    author,
+    genre,
+    rating,
+    summary,
+    full_review,
+  } = req.body;
 
-    // check if this manga is already in the db
-    // all this will become a query
-    const mangaExists = mangas.find(m => m.id === parseInt(mal_id));
+  try {
+    // we save the relevant information from the manga on our db so the website can function without jikan
+    const mangaResult = await db.query(
+      `INSERT INTO mangas (mal_id, title_en, title_jp, author, genre, cover_url) 
+       VALUES ($1, $2, $3, $4, $5, $6) 
+       ON CONFLICT (mal_id) 
+       DO UPDATE SET mal_id = EXCLUDED.mal_id 
+       RETURNING id`,
+      [mal_id, title, title_jp, author, genre, image_url]
+    );
 
-    if (!mangaExists) {
-        mangas.push({
-            id: parseInt(mal_id),
-            title_en: title,
-            author: author,
-            cover_image: image_url
-        });
-    }
+    // grabbing the serial id
+    const mangaId = mangaResult.rows[0].id;
 
-    // new review object
-    const newReview = {
-        id: reviews.length + 1, 
-        manga_id: parseInt(mal_id),
-        user_id: 1, // hardcoded for now
-        rating: rating,
-        summary: summary,
-        full_review: full_review,
-        date_added: new Date().toLocaleDateString()
-    };
+    await db.query(
+      `
+        INSERT INTO reviews (
+        user_id,
+        manga_id,
+        rating,
+        summary,
+        full_review)
+        VALUES ($1, $2, $3, $4, $5)`,
+      [1, mangaId, rating, summary, full_review]
+    );
 
-    // 4. Push to reviews array and go back home
-    reviews.push(newReview);
     res.redirect("/");
+  } catch (err) {
+    console.error("Database Error:", err);
+    res.status(500).send("Could not save review to database.");
+  }
 });
 
 app.listen(port, () => {

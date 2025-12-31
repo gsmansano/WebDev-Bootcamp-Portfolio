@@ -1,48 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Reviewing <%= manga.title %></title>
-</head>
-<body>
+  </head>
+  <body>
     <header>
-        <h1>Write your Review</h1>
-        <div class="manga-header">
-            <img src="<%= manga.images.jpg.image_url %>" alt="<%= manga.title %>" width="150">
-            <h2><%= manga.title %></h2>
-            <p>By: <%= manga.authors[0] ? manga.authors[0].name : 'Unknown' %></p>
-        </div>
+      <h1>Write your Review</h1>
+      <div class="manga-header">
+        <img
+          src="<%= manga.images.jpg.image_url %>"
+          alt="<%= manga.title %>"
+          width="150"
+        />
+        <h2><%= manga.title %></h2>
+        <p>By: <%= manga.authors[0] ? manga.authors[0].name : 'Unknown' %></p>
+      </div>
     </header>
 
     <main>
-        <form action="/save-review" method="POST">
-            
-            <input type="hidden" name="mal_id" value="<%= manga.mal_id %>">
-            <input type="hidden" name="title" value="<%= manga.title %>">
-            <input type="hidden" name="image_url" value="<%= manga.images.jpg.image_url %>">
-            <input type="hidden" name="author" value="<%= manga.authors[0] ? manga.authors[0].name : 'Unknown' %>">
+      <form action="/save-review" method="POST">
+        <input type="hidden" name="mal_id" value="<%= manga.mal_id %>" />
+        <input type="hidden" name="title" value="<%= manga.title %>" />
+        <input
+          type="hidden"
+          name="title_jp"
+          value="<%= manga.title_japanese %>"
+        />
+        <input
+          type="hidden"
+          name="image_url"
+          value="<%= manga.images.jpg.large_image_url %>"
+        />
+        <input
+          type="hidden"
+          name="author"
+          value="<%= manga.authors[0] ? manga.authors[0].name : 'Unknown' %>"
+        />
+        <input
+          type="hidden"
+          name="genre"
+          value="<%= manga.genres.map(g => g.name).join(', ') %>"
+        />
 
-            <div>
-                <label for="rating">Rating (1-10):</label>
-                <input type="number" name="rating" id="rating" min="1" max="10" required>
-            </div>
+        <div>
+          <label for="rating">Rating (1-10):</label>
+          <input
+            type="number"
+            name="rating"
+            id="rating"
+            min="1"
+            max="10"
+            step="0.1"
+            required
+          />
+        </div>
 
-            <div>
-                <label for="summary">Short Hook (Summary):</label><br>
-                <textarea name="summary" id="summary" rows="3" cols="50" placeholder="A one-sentence hook..." required></textarea>
-            </div>
+        <div>
+          <label for="summary">Short Hook (Summary):</label><br />
+          <textarea
+            name="summary"
+            id="summary"
+            rows="3"
+            cols="50"
+            placeholder="A one-sentence hook..."
+            required
+          ></textarea>
+        </div>
 
-            <div>
-                <label for="full_review">The Full Review:</label><br>
-                <textarea name="full_review" id="full_review" rows="10" cols="50" placeholder="Write your deep thoughts here..." required></textarea>
-            </div>
+        <div>
+          <label for="full_review">The Full Review:</label><br />
+          <textarea
+            name="full_review"
+            id="full_review"
+            rows="10"
+            cols="50"
+            placeholder="Write your deep thoughts here..."
+            required
+          ></textarea>
+        </div>
 
-            <button type="submit">Publish Review</button>
-        </form>
+        <button type="submit">Publish Review</button>
+      </form>
     </main>
 
     <footer>
-        <a href="/search">Cancel</a>
+      <a href="/search">Cancel</a>
     </footer>
-</body>
+  </body>
 </html>

@@ -2,23 +2,41 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title><%= manga.title_en %> - Review</title>
+    <title><%= data.title_en %> - Review</title>
 </head>
 <body>
-    <a href="/">← Back to Home</a>
+    <nav>
+        <a href="/">← Back to Home</a>
+    </nav>
 
     <main>
-        <h1><%= manga.title_en %></h1>
-        <h3>By: <%= manga.author %></h3>
-        
-        <div class="rating-badge">
-            <strong>Rating:</strong> <%= review.rating %>/10
-        </div>
+        <header>
+            <h1><%= data.title_en %></h1>
+            <h3><%= data.title_jp %></h3>
+            <p><strong>Author:</strong> <%= data.author %></p>
+            <p><strong>Genre:</strong> <%= data.genre %></p>
+        </header>
 
-        <article>
-            <p><em>Added on: <%= review.date_added %></em></p>
-            <hr>
-            <p><%= review.full_review %></p>
+        <section id="manga-meta">
+            <img src="<%= data.cover_url %>" alt="Cover of <%= data.title_en %>" width="250">
+            
+            <div class="rating-badge">
+                <strong>My Rating:</strong> <%= data.rating %>/10
+            </div>
+            
+            <p>
+                <a href="https://myanimelist.net/manga/<%= data.mal_id %>" target="_blank">
+                    View on MyAnimeList
+                </a>
+            </p>
+        </section>
+
+        <hr>
+
+        <article class="review-body">
+            <p><em>Published on: <%= data.date_added.toDateString() %></em></p>
+            <h3>My Thoughts</h3>
+            <p><%= data.full_review %></p>
         </article>
     </main>
 </body>
