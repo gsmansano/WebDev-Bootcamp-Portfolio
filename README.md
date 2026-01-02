@@ -9,8 +9,13 @@ As I progress, I will add capstone projects and any exercises or challenges that
 
 ## Projects Included
 
-### 1. Capstone – Fake Quote Generator (API Usage)
-A small project focused on calling external APIs, handling JSON responses, and rendering data dynamically.  
+### 1. Mangaboxd – Manga Review & Tracking App (Full-Stack CRUD)
+A personal manga journal and review aggregator inspired by Letterboxd. This is a full-stack application that manages a local database while communicating with external anime/manga APIs.
+* **Key Features:** RESTful routing, search integration via Jikan (MyAnimeList) API, persistent PostgreSQL storage, and a "smart" editor for creating/updating reviews.
+* **Tech used:** Node.js, Express, PostgreSQL, EJS, Axios, CSS Flexbox/Grid.
+
+### 2. Capstone – Fake Quote Generator (API Usage)
+A project focused on asynchronous programming, calling external APIs, handling JSON responses, and rendering data dynamically to the frontend.  
 **Tech used:** Node.js, Express, APIs, EJS.
 
 *More capstones and exercises will be added over time.*
@@ -34,7 +39,6 @@ Each project lives in its own folder with:
 ## Future Additions
 
 Planned upcoming additions include:
-- Additional API-based capstones  
 - React mini-projects  
-- SQL and database exercises  
-- Full-stack capstones  
+- Advanced SQL and Database architecture exercises  
+- Full-stack capstones with User Authentication
