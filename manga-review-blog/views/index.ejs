@@ -1,72 +1,51 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Manga Review Blog</title>
-  </head>
-  <body>
-    <header>
-      <h1>Manga Review Blog</h1>
-      <p>
-        A personal space where I track and review the manga I've read. This
-        project uses the Jikan API and PostgreSQL.
-        <a href="/search" class="btn-new-review">+ Write a New Review</a>
-      </p>
-    </header>
+<%- include("partials/header.ejs") %>
+
+<section class="home-intro">
+    <p>A personal space where I track and review the manga I've read. This project uses the Jikan API and PostgreSQL.</p>
+</section>
 
     <%# These buttons will control the sorting/order by which the reviews are
     shown. default is date desc (newest first) They're 'smart' and will work for
     both changing sort type but also the sorting order.%>
-    <section id="controls">
-      <a
-        href="/?sort=date&dir=<%= (currentSort === 'date' && currentDir === 'desc') ? 'asc' : 'desc' %>"
-      >
-        Order by Date <%= currentSort === 'date' ? (currentDir === 'asc' ? '↑' :
-        '↓') : '' %>
-      </a>
+<section id="controls" class="sort-bar">
+    <a href="/?sort=date&dir=<%= (currentSort === 'date' && currentDir === 'desc') ? 'asc' : 'desc' %>" class="<%= currentSort === 'date' ? 'active' : '' %>">
+        Date <%= currentSort === 'date' ? (currentDir === 'asc' ? '↑' : '↓') : '' %>
+    </a>
 
-      <a
-        href="/?sort=rating&dir=<%= (currentSort === 'rating' && currentDir === 'desc') ? 'asc' : 'desc' %>"
-      >
-        Order by Rating <%= currentSort === 'rating' ? (currentDir === 'asc' ?
-        '↑' : '↓') : '' %>
-      </a>
+    <a href="/?sort=rating&dir=<%= (currentSort === 'rating' && currentDir === 'desc') ? 'asc' : 'desc' %>" class="<%= currentSort === 'rating' ? 'active' : '' %>">
+        Rating <%= currentSort === 'rating' ? (currentDir === 'asc' ? '↑' : '↓') : '' %>
+    </a>
 
-      <a
-        href="/?sort=title&dir=<%= (currentSort === 'title' && currentDir === 'asc') ? 'desc' : 'asc' %>"
-      >
-        Order by Title <%= currentSort === 'title' ? (currentDir === 'asc' ? '↑'
-        : '↓') : '' %>
-      </a>
-    </section>
+    <a href="/?sort=title&dir=<%= (currentSort === 'title' && currentDir === 'asc') ? 'desc' : 'asc' %>" class="<%= currentSort === 'title' ? 'active' : '' %>">
+        Title <%= currentSort === 'title' ? (currentDir === 'asc' ? '↑' : '↓') : '' %>
+    </a>
+</section>
 
-    <hr />
-    <% if (reviews.length === 0) { %>
+<% if (reviews.length === 0) { %>
     <div class="empty-state">
-      <p>You haven't reviewed any manga yet!</p>
-      <a href="/search">Click here to search and write your first review.</a>
+        <p>You haven't reviewed any manga yet!</p>
+        <a href="/search">Search and write your first review.</a>
     </div>
-    <% } else { %>
-    <main id="reviews-container">
-      <% reviews.forEach(review => { %>
-      <article class="review-summary">
-        <h2><%= review.title_en %></h2>
+<% } else { %>
+    <div id="reviews-container">
+        <% reviews.forEach(review => { %>
+            <article class="review-card">
+                <img src="<%= review.cover_url %>" alt="Cover of <%= review.title_en %>" class="card-img" />
+                
+                <div class="card-content">
+                    <div class="card-header">
+                        <h2><%= review.title_en %></h2>
+                        <span class="rating-badge"><%= review.rating %></span>
+                    </div>
+                    
+                    <p class="date-text">Added on <%= new Date(review.date_added).toLocaleDateString() %></p>
+                    <p class="summary-text"><%= review.summary %></p>
+                    
+                    <a href="/review/<%= review.review_id %>" class="read-more">View Full Review →</a>
+                </div>
+            </article>
+        <% }); %>
+    </div>
+<% } %>
 
-        <img
-          src="<%= review.cover_url %>"
-          alt="Cover of <%= review.title_en %>"
-          width="100"
-        />
-
-        <p><strong>Rating:</strong> <%= review.rating %>/10</p>
-        <p><strong>Added on:</strong> <%= review.date_added %></p>
-        <p><strong>Summary:</strong> <%= review.summary %></p>
-
-        <a href="/review/<%= review.review_id %>">View Full Review</a>
-        <hr />
-      </article>
-      <% }); %>
-    </main>
-    <% } %>
-  </body>
-</html>
+<%- include("partials/footer.ejs") %>

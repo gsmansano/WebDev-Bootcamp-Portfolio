@@ -1,0 +1,330 @@
+/* ==========================================================================
+   1. CORE VARIABLES & BASE STYLES
+   ========================================================================== */
+:root {
+  --bg: #121212;
+  --surface: #1e1e1e;
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0a0;
+  --accent: #00e676;
+  --error: #ff5252;
+  --container-width: 850px;
+  --reader-width: 680px;
+  --radius: 8px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text-primary);
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+main {
+  flex: 1; /* Pushes footer to bottom */
+}
+
+/* ==========================================================================
+   2. SHARED COMPONENTS (Buttons, Forms, Links)
+   ========================================================================== */
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+/* Standard Buttons */
+.btn-primary, .btn-publish {
+  background: var(--accent);
+  color: #000;
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--radius);
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.btn-primary:hover, .btn-publish:hover {
+  filter: brightness(1.1);
+}
+
+/* Outlined Buttons (Edit/Delete) */
+.btn-edit, .btn-delete {
+  background: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: all 0.2s;
+  display: inline-block;
+}
+
+.btn-edit {
+  border: 1px solid var(--accent);
+  color: var(--accent);
+}
+
+.btn-edit:hover {
+  background: var(--accent);
+  color: #000;
+}
+
+.btn-delete {
+  border: 1px solid var(--error);
+  color: var(--error);
+}
+
+.btn-delete:hover {
+  background: var(--error);
+  color: white;
+}
+
+/* Form Inputs */
+input, textarea {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid #333;
+  color: white;
+  padding: 0.8rem;
+  border-radius: 4px;
+  font-family: inherit;
+  margin-top: 0.5rem;
+}
+
+input:focus, textarea:focus {
+  outline: 2px solid var(--accent);
+  border-color: transparent;
+}
+
+/* ==========================================================================
+   3. GLOBAL PARTIALS (Header & Footer)
+   ========================================================================== */
+.main-header {
+  padding: 2rem 0;
+  border-bottom: 1px solid #2a2a2a;
+  margin-bottom: 2rem;
+}
+
+.main-header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.05rem;
+}
+
+.page-indicator {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-left: 0.6rem;
+  font-weight: 400;
+}
+
+.main-footer {
+  padding: 2rem 0;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+/* ==========================================================================
+   4. HOME PAGE (Index.ejs)
+   ========================================================================== */
+.sort-bar {
+  display: flex;
+  gap: 1.5rem;
+  margin: 1rem 0 2.5rem 0;
+}
+
+.sort-bar a {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05rem;
+  font-weight: 600;
+}
+
+.sort-bar a.active {
+  color: var(--text-primary);
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 2px;
+}
+
+.review-card {
+  display: flex;
+  gap: 1.5rem;
+  background: var(--surface);
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  margin-bottom: 2rem;
+  border: 1px solid #2a2a2a;
+}
+
+.card-img {
+  width: 120px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.rating-badge {
+  background: #2a2a2a;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  color: var(--accent);
+  font-weight: 800;
+}
+
+/* ==========================================================================
+   5. SEARCH PAGE (Search.ejs)
+   ========================================================================== */
+.search-hero {
+  text-align: center;
+  padding: 3rem 0;
+}
+
+.search-form {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 1.5rem auto 0;
+  max-width: 600px;
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.search-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 1rem;
+  text-align: center;
+  border: 1px solid #2a2a2a;
+}
+
+.search-card img {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.search-tip {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin: 0.5rem 0 2.5rem 0;
+  font-style: italic;
+  text-align: center;
+  display: block;
+}
+
+/* ==========================================================================
+   6. FULL REVIEW PAGE (Post.ejs)
+   ========================================================================== */
+.reader-view {
+  max-width: var(--reader-width);
+  margin: 4rem auto;
+}
+
+.review-hero {
+  display: flex;
+  gap: 3rem;
+  margin-bottom: 4rem;
+  align-items: flex-start;
+}
+
+.hero-image img {
+  width: 250px;
+  height: auto;
+  border-radius: var(--radius);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.review-text {
+  font-size: 1.15rem;
+  color: #d1d1d1;
+  white-space: pre-wrap;
+  letter-spacing: -0.011em;
+  padding-bottom: 3rem;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.publish-date {
+  font-style: italic;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #2a2a2a;
+  padding-bottom: 1rem;
+}
+
+.admin-actions {
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid #2a2a2a;
+  display: flex;
+  justify-content: center;
+  gap: 1rem; 
+}
+
+/* ==========================================================================
+   7. EDITOR PAGE (Editor.ejs)
+   ========================================================================== */
+.editor-container {
+  display: flex;
+  gap: 3rem;
+  margin-top: 2rem;
+  align-items: flex-start;
+}
+
+.editor-sidebar img {
+  width: 200px;
+  height: auto;
+  border-radius: var(--radius);
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.review-form {
+  flex: 1;
+}

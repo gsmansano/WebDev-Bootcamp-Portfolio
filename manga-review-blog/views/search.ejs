@@ -1,40 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Search Manga</title>
-  </head>
-  <body>
+<%- include("partials/header.ejs") %>
+
+<section class="search-hero">
     <h1>Search for Manga</h1>
-
-    <form action="/search" method="GET">
-      <input type="text" name="q" placeholder="Enter manga title..." required />
-      <button type="submit">Search</button>
+    <form action="/search" method="GET" class="search-form">
+        <input type="text" name="q" placeholder="Enter manga title..." value="<%= locals.searchQuery ? searchQuery : '' %>" required />
+        <button type="submit" class="btn-primary">Search</button>
     </form>
+</section>
 
-    <hr />
+<% if (locals.results && results.length > 0) { %>
+    <div class="results-container">
+        <h2>Top Matches Found (<%= results.length > 10 ? 10 : results.length %>)</h2>
+        <p class="search-tip">Not what you're looking for? Try being more specific or using the Japanese title.</p>
+        
+        <div class="results-grid">
+            <% results.slice(0, 10).forEach(manga => { %>
+                <article class="search-card">
+                    <img src="<%= manga.images.jpg.image_url %>" alt="<%= manga.title %> cover" />
+                    
+                    <div class="search-card-info">
+                        <h3><%= manga.title %></h3>
+                        <p class="author-text">By: <%= manga.authors[0] ? manga.authors[0].name : 'Unknown' %></p>
+                        
+                        <form action="/write-review" method="POST">
+                            <input type="hidden" name="mal_id" value="<%= manga.mal_id %>" />
+                            <button type="submit" class="btn-secondary">Review This</button>
+                        </form>
+                    </div>
+                </article>
+            <% }); %>
+        </div>
+    </div>
+<% } else if (locals.searchQuery) { %>
+    <div class="empty-state">
+        <p>No results found for "<strong><%= searchQuery %></strong>".</p>
+        <a href="/search" class="btn-text">Try another search?</a>
+    </div>
+<% } %>
 
-    <% if (locals.results && results.length > 0) { %>
-    <h2>Found <%= results.length %> matches:</h2>
-    <ul>
-      <% results.forEach(manga => { %>
-      <li>
-        <img src="<%= manga.images.jpg.small_image_url %>" alt="cover" />
-        <strong><%= manga.title %></strong>
-        (<%= manga.authors[0] ? manga.authors[0].name : 'Unknown' %>)
-
-        <form action="/write-review" method="POST">
-          <input type="hidden" name="mal_id" value="<%= manga.mal_id %>" />
-          <button type="submit">Review this Manga</button>
-        </form>
-      </li>
-      <br />
-      <% }); %>
-    </ul>
-    <% } else if (locals.searchQuery) { %>
-    <p>No results found for "<%= searchQuery %>".</p>
-    <% } %>
-
-    <a href="/">Back to Home</a>
-  </body>
-</html>
+<%- include("partials/footer.ejs") %>

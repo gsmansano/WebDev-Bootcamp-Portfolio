@@ -42,6 +42,8 @@ app.get("/", async (req, res) => {
       reviews: queryResult.rows,
       currentSort: sort,
       currentDir: dir,
+      pageTitle: "All Reviews",
+      activePage: "home",
     });
   } catch (err) {
     console.error(err);
@@ -62,6 +64,7 @@ app.get("/review/:id", async (req, res) => {
         reviews.date_added,
         mangas.* FROM reviews
         JOIN mangas ON reviews.manga_id = mangas.id
+
         WHERE reviews.id = $1`,
       [id]
     );
@@ -74,6 +77,8 @@ app.get("/review/:id", async (req, res) => {
 
     res.render("post.ejs", {
       data: reviewData,
+      pageTitle: "Full Review",
+      activePage: "post",
     });
   } catch (err) {
     console.error(err);
@@ -86,17 +91,27 @@ app.get("/search", async (req, res) => {
   const query = req.query.q;
 
   if (!query) {
-    return res.render("search.ejs", { results: [] });
+    return res.render("search.ejs", {
+      results: [],
+      searchQuery: "",
+      pageTitle: "Search",
+      activePage: "search",
+    });
   }
 
   try {
     const response = await axios.get(
-      `https://api.jikan.moe/v4/manga?q=${query}&limit=5`
+      `https://api.jikan.moe/v4/manga?q=${query}&limit=10`
     );
 
     const results = response.data.data;
 
-    res.render("search.ejs", { results: results, searchQuery: query });
+    res.render("search.ejs", {
+      results: results,
+      searchQuery: query,
+      pageTitle: "Search",
+      activePage: "search",
+    });
   } catch (error) {
     res.status(500).send("Error fetching from Jikan");
   }
@@ -113,7 +128,12 @@ app.post("/write-review", async (req, res) => {
     );
     // and we pass it along to our review editor page.
     const mangaData = response.data.data;
-    res.render("editor.ejs", { manga: mangaData });
+    res.render("editor.ejs", {
+      manga: mangaData,
+      isEditing: false,
+      pageTitle: "New Review",
+      activePage: "editor",
+    });
   } catch (error) {
     res.status(500).send("Error loading manga details");
   }
@@ -163,6 +183,62 @@ app.post("/save-review", async (req, res) => {
   } catch (err) {
     console.error("Database Error:", err);
     res.status(500).send("Could not save review to database.");
+  }
+});
+
+// edit review.
+app.get("/edit-review/:id", async (req, res) => {
+  const id = req.params.id;
+  try {
+    const result = await db.query(
+      `SELECT reviews.*, mangas.title_en, mangas.cover_url, mangas.author 
+       FROM reviews 
+       JOIN mangas ON reviews.manga_id = mangas.id 
+       WHERE reviews.id = $1`,
+      [id]
+    );
+
+    if (result.rows.length === 0)
+      return res.status(404).send("Review not found");
+
+    res.render("editor.ejs", {
+      manga: result.rows[0],
+      isEditing: true,
+      pageTitle: "Edit Review",
+      activePage: "editor",
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error fetching review for edit");
+  }
+});
+
+// post route for edited review
+app.post("/update-review/:id", async (req, res) => {
+  const id = req.params.id;
+  const { rating, summary, full_review } = req.body;
+
+  try {
+    await db.query(
+      "UPDATE reviews SET rating = $1, summary = $2, full_review = $3 WHERE id = $4",
+      [rating, summary, full_review, id]
+    );
+    res.redirect(`/review/${id}`);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error updating record");
+  }
+});
+
+// delete a review route
+app.post("/delete-review/:id", async (req, res) => {
+  const id = req.params.id;
+  try {
+    await db.query("DELETE FROM reviews WHERE id = $1", [id]);
+    res.redirect("/");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error deleting review");
   }
 });
 

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= typeof pageTitle !== 'undefined' ? pageTitle + ' | ' : '' %>Mangaboxd</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/main.css">
+</head>
+<body>
+    <header class="main-header">
+        <nav class="container">
+            <div class="brand">
+                <a href="/" class="logo">MANGABOXD</a>
+                <span class="page-indicator">/ <%= typeof pageTitle !== 'undefined' ? pageTitle.toLowerCase() : 'all reviews' %></span>
+            </div>
+
+            <div class="nav-actions">
+                <% if (typeof activePage !== 'undefined' && activePage !== 'search' && activePage !== 'editor') { %>
+                    <a href="/search" class="btn-primary">+ New Review</a>
+                <% } %>
+            </div>
+        </nav>
+    </header>
+    <main class="container">
